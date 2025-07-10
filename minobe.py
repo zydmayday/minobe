@@ -21,7 +21,10 @@ def login_and_scrape():
     # URL and credentials
     base_url = 'http://buscatch.net'
     login_url = 'http://buscatch.net/mobile/minobe0046/?u=20d8e091a0a309ed1562443&s=977411'
-    password = 'vyvput-ciQcaf-rigwy8'
+    password = os.environ.get('MINOBE_PASSWORD')
+    if not password:
+        print("Error: MINOBE_PASSWORD environment variable not set.")
+        return
 
     # Create a session object to persist login
     session = requests.Session()
@@ -94,9 +97,9 @@ def login_and_scrape():
         print(f"Error fetching news page: {e}")
         return
 
-    # Create the main notifications folder
-    if not os.path.exists('notifications'):
-        os.makedirs('notifications')
+    # Create the main 幼稚園からのお知らせ folder
+    if not os.path.exists('幼稚園からのお知らせ'):
+        os.makedirs('幼稚園からのお知らせ')
 
     # Find all the links to individual news articles
     soup = BeautifulSoup(response.content, 'lxml')
@@ -115,7 +118,7 @@ def login_and_scrape():
 
         # Get the article title and sanitize it for the folder name
         article_title = sanitize_filename(link.text)
-        article_folder = os.path.join('notifications', article_title)
+        article_folder = os.path.join('幼稚園からのお知らせ', article_title)
         
         if not os.path.exists(article_folder):
             os.makedirs(article_folder)
@@ -146,7 +149,7 @@ def login_and_scrape():
             except requests.exceptions.RequestException as e:
                 print(f"Error downloading attachment {attachment_filename}: {e}")
 
-    print("News content and attachments saved to the 'notifications' folder.")
+    print("News content and attachments saved to the '幼稚園からのお知らせ' folder.")
 
 # Call the function
 login_and_scrape()
